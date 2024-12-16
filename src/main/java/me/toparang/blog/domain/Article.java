@@ -2,7 +2,13 @@ package me.toparang.blog.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
+
+@EntityListeners(AuditingEntityListener.class) // entity의 생성, 수정 시간 자동 감시. 이를 통해 @CreatedDate, @LastModifiedDate 추적 가능
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,4 +25,12 @@ public class Article {
 
     @Column(name = "content", nullable = false)
     private String content;
+    
+    @CreatedDate
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
