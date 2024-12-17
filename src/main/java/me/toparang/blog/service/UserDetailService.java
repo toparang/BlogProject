@@ -15,7 +15,7 @@ public class UserDetailService implements UserDetailsService {
 
     // 사용자의 이름 (email)로 사용자의 정보를 가져오는 method
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException(email));
     }
