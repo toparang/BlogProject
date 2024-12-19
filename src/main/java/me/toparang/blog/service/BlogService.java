@@ -5,6 +5,7 @@ import me.toparang.blog.domain.Article;
 import me.toparang.blog.dto.AddArticleRequest;
 import me.toparang.blog.dto.UpdateArticleRequest;
 import me.toparang.blog.repository.BlogRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +16,8 @@ import java.util.List;
 public class BlogService {
     private final BlogRepository blogRepository;
 
-    public Article save(AddArticleRequest request) {
-        return blogRepository.save(request.toEntity());
+    public Article save(AddArticleRequest request, String userName) {
+        return blogRepository.save(request.toEntity(userName));
     }
 
     public List<Article> findAll() {
@@ -29,6 +30,9 @@ public class BlogService {
     }
 
     public void deleteById(Long id) {
+        Article article = blogRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
+        authorizeArticleAuthor(article);
         blogRepository.deleteById(id);
     }
 
@@ -37,6 +41,7 @@ public class BlogService {
         Article article = blogRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found" + id));
 
+        authorizeArticleAuthor(article);
         Article updated = article.toBuilder()
                 .title(request.getTitle())
                 .content(request.getContent())
@@ -45,5 +50,12 @@ public class BlogService {
         blogRepository.save(updated);
 
         return updated;
+    }
+
+    private void authorizeArticleAuthor(Article article) {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!article.getAuthor().equals(userName)) {
+            throw new IllegalArgumentException("not authorized");
+        }
     }
 }

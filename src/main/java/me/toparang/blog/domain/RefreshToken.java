@@ -6,7 +6,7 @@ import lombok.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder(toBuilder = true)
+@Builder
 @Getter
 public class RefreshToken {
     @Id
@@ -19,4 +19,10 @@ public class RefreshToken {
 
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
+
+    public RefreshToken update(String refreshToken) {
+        this.refreshToken = refreshToken;
+
+        return this;
+    }
 }

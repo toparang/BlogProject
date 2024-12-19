@@ -25,6 +25,9 @@ public class Article {
 
     @Column(name = "content", nullable = false)
     private String content;
+
+    @Column(name = "author", nullable = false)
+    private String author;
     
     @CreatedDate
     @Column(name = "created_at")
@@ -33,4 +36,12 @@ public class Article {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public Article toEntity(String author) {
+        return Article.builder()
+                .title(title)
+                .content(content)
+                .author(author)
+                .build();
+    }
 }

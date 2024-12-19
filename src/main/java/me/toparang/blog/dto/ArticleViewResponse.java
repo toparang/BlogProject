@@ -14,6 +14,7 @@ public class ArticleViewResponse {
     private Long id;
     private String title;
     private String content;
+    private String author;
     private LocalDateTime createdAt;
 
     public static Object toDto(Article article) {
@@ -21,6 +22,7 @@ public class ArticleViewResponse {
                 .title(article.getTitle())
                 .content(article.getContent())
                 .id(article.getId())
+                .author(article.getAuthor())
                 .createdAt(article.getCreatedAt())
                 .build();
     }
