@@ -50,29 +50,27 @@ public class WebOAuthSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
-                .sessionManagement((management -> management.sessionCreationPolicy(
+                .sessionManagement(management -> management.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS
-                )))
+                ))
                 // 여기까지 폼 로그인, 세션 비활성화
                 // 아래는 헤더 확인할 커스텀 필터 선언
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 // token 재발급은 url 인증 절차 없이 수행
+                // .authorizeRequests는 deprecated되어 authorizeHttpRequests()로 변경
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/api/token"))
-                        .permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/**"))
-                        .authenticated()
-                        .anyRequest().permitAll()
-                ).oauth2Login(oauth2 -> oauth2
+                        .requestMatchers(new AntPathRequestMatcher("/api/token")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
+                        .anyRequest().permitAll())
+                .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         // Authorization 요청과 관련된 상태 저장
-                        .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
+                        .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
                                 .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository()))
-                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
                                 .userService(oAuth2UserCustomService))
                         // 인증 성공 시 실행할 핸들러
-                        .successHandler(oAuth2SuccessHandler())
-                )
+                        .successHandler(oAuth2SuccessHandler()))
                 // /api로 시작하는 url인 경우 401 상태 코드 반환하도록 예외 처리
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .defaultAuthenticationEntryPointFor(

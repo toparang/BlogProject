@@ -22,6 +22,8 @@ public class BlogApiController {
     public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request, Principal principal) {
         Article savedArticle = blogService.save(request, principal.getName());
 
+//        System.out.println("1 " + principal.getName());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(savedArticle);
     }
 

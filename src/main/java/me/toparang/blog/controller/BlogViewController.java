@@ -36,12 +36,7 @@ public class BlogViewController {
     @GetMapping("/articles/{id}")
     public String getArticle(@PathVariable("id") Long id, Model model) {
         Article article = blogService.findById(id);
-        model.addAttribute("article", ArticleViewResponse.builder()
-                        .id(article.getId())
-                        .title(article.getTitle())
-                        .content(article.getContent())
-                        .createdAt(article.getCreatedAt())
-                .build());
+        model.addAttribute("article", ArticleViewResponse.toDto(article));
 
         return "article";
     }
